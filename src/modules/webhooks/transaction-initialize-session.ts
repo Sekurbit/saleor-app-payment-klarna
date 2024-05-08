@@ -58,7 +58,7 @@ export const TransactionInitializeSessionWebhookHandler = async (
   invariant(app, "Missing event.recipient!");
   invariant(event.data, "Missing data");
 
-  const merchantUrls = transactionInitializePayloadData.parse(event.data).merchantUrls;
+  const { merchantUrls } = transactionInitializePayloadData.parse(event.data);
 
   const { privateMetadata } = app;
 
@@ -132,12 +132,19 @@ export const TransactionInitializeSessionWebhookHandler = async (
     throw new KlarnaHttpClientError(klarnaSession.statusText, { errors: [klarnaSession.data] });
   }
 
+  const baseSuccessUrl = new URL(merchantUrls.success);
+  baseSuccessUrl.searchParams.append("authorization_token", "{{authorization_token}}");
+  baseSuccessUrl.searchParams.append("transaction_id", transactionId);
+  // dont encode the search params because {{authorization_token}} is a placeholder
+  baseSuccessUrl.search = decodeURIComponent(baseSuccessUrl.search);
+
+  const successUrl = baseSuccessUrl.toString();
+
   const createHppSessionPayload: hppComponents["schemas"]["SessionCreationRequestV1"] = {
     payment_session_url:
       klarnaConfig.apiUrl + "/payments/v1/sessions/" + klarnaSession.data.session_id,
     merchant_urls: {
-      ...merchantUrls,
-      success: merchantUrls.success + "?authorization_token={{authorization_token}}",
+      success: successUrl,
     },
   };
 
