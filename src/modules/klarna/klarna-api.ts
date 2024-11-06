@@ -9,10 +9,11 @@ import {
   type paths as PaymentPaths,
   type components as PaymentComponents,
 } from "generated/klarna-payments";
+import { type paths as CheckoutPaths } from "generated/klarna-checkout";
 import { type paths as OrdersPaths } from "generated/klarna-orders";
 import { type paths as HppPaths } from "generated/klarna-hpp";
 
-type AllKlarnaPaths = PaymentPaths & OrdersPaths & HppPaths;
+type AllKlarnaPaths = PaymentPaths & OrdersPaths & HppPaths & CheckoutPaths;
 
 import { KlarnaHttpClientError } from "@/errors";
 
@@ -159,7 +160,7 @@ export const prepareRequestAddress = (
     street_address2: address.streetAddress2,
     postal_code: address.postalCode,
     city: address.city,
-    region: address.countryArea,
+    //region: address.countryArea,
     phone: address.phone ?? undefined,
     country: address.country.code,
   };

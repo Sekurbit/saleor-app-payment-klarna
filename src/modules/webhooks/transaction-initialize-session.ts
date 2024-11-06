@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { getNormalizedLocale } from "@/backend-lib/api-route-utils";
 import { KlarnaHttpClientError } from "@/errors";
 import { env } from "@/lib/env.mjs";
 import { invariant } from "@/lib/invariant";
@@ -78,7 +77,7 @@ export const TransactionInitializeSessionWebhookHandler = async (
 
   const createHppSession = klarnaClient.path("/hpp/v1/sessions").method("post").create();
 
-  const locale = getNormalizedLocale(event);
+  //const locale = getNormalizedLocale(event);
 
   const country = event.sourceObject.billingAddress?.country.code;
   invariant(country, "Missing country code");
@@ -104,7 +103,7 @@ export const TransactionInitializeSessionWebhookHandler = async (
 
   const email = sourceObject.userEmail;
   const createKlarnaSessionPayload: paymentsComponents["schemas"]["session_create"] = {
-    locale: locale.split("_")[0],
+    locale: "sv-SE", //locale.split("_")[0],
     purchase_country: country,
     purchase_currency: event.action.currency,
     billing_address: prepareRequestAddress(sourceObject.billingAddress, email),
